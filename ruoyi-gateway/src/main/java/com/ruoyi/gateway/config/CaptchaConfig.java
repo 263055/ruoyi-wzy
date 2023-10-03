@@ -8,13 +8,22 @@ import com.google.code.kaptcha.util.Config;
 import static com.google.code.kaptcha.Constants.*;
 
 /**
- * 验证码配置
- * 
+ * 验证码配置 <br/>
+ * 这里提供了两种验证码 <br/>
+ * 分别是数字验证码和字符验证码 <br/>
  * @author ruoyi
  */
 @Configuration
 public class CaptchaConfig
 {
+    /**
+     * 这些方法的核心就是: <br/>
+     * properties.setProperty(KAPTCHA_TEXTPRODUCER_IMPL, "com.ruoyi.gateway.config.KaptchaTextCreator"); <br/>
+     * 上面的代码,默认使用的是 com.google.code.kaptcha.text.impl.DefaultTextCreator <br/>
+     * 也就是默认的字符生成器 <br/>
+     * 而上面的代码中,自定义了实现方法,用加减乘除实现 <br/>
+     */
+    // 字符验证码
     @Bean(name = "captchaProducer")
     public DefaultKaptcha getKaptchaBean()
     {
@@ -42,7 +51,9 @@ public class CaptchaConfig
         defaultKaptcha.setConfig(config);
         return defaultKaptcha;
     }
-    
+
+    // 数字验证码
+    // 数字验证码的文本生成内容,参考 com.ruoyi.gateway.config.KaptchaTextCreator
     @Bean(name = "captchaProducerMath")
     public DefaultKaptcha getKaptchaBeanMath()
     {

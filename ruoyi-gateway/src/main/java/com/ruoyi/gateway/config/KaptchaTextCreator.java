@@ -21,6 +21,7 @@ public class KaptchaTextCreator extends DefaultTextCreator
         int y = random.nextInt(10);
         StringBuilder suChinese = new StringBuilder();
         int randomoperands = random.nextInt(3);
+        // 0 表示乘法
         if (randomoperands == 0)
         {
             result = x * y;
@@ -28,8 +29,10 @@ public class KaptchaTextCreator extends DefaultTextCreator
             suChinese.append("*");
             suChinese.append(CNUMBERS[y]);
         }
+        // 1 表示除法或加法
         else if (randomoperands == 1)
         {
+            // 判断除法是否有效,即 强制执行整数的除法运算
             if ((x != 0) && y % x == 0)
             {
                 result = y / x;
@@ -37,6 +40,7 @@ public class KaptchaTextCreator extends DefaultTextCreator
                 suChinese.append("/");
                 suChinese.append(CNUMBERS[x]);
             }
+            // 否则执行加法
             else
             {
                 result = x + y;
@@ -45,6 +49,7 @@ public class KaptchaTextCreator extends DefaultTextCreator
                 suChinese.append(CNUMBERS[y]);
             }
         }
+        // 2 表示减法
         else if (randomoperands == 2)
         {
             if (x >= y)
@@ -69,7 +74,7 @@ public class KaptchaTextCreator extends DefaultTextCreator
             suChinese.append("+");
             suChinese.append(CNUMBERS[y]);
         }
-        suChinese.append("=?@" + result);
+        suChinese.append("=?@").append(result);
         return suChinese.toString();
     }
 }

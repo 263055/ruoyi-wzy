@@ -1,13 +1,5 @@
 package com.ruoyi.gateway.service.impl;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Resource;
-import javax.imageio.ImageIO;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.util.FastByteArrayOutputStream;
 import com.google.code.kaptcha.Producer;
 import com.ruoyi.common.core.constant.CacheConstants;
 import com.ruoyi.common.core.constant.Constants;
@@ -19,6 +11,14 @@ import com.ruoyi.common.core.web.domain.AjaxResult;
 import com.ruoyi.common.redis.service.RedisService;
 import com.ruoyi.gateway.config.properties.CaptchaProperties;
 import com.ruoyi.gateway.service.ValidateCodeService;
+import org.springframework.stereotype.Service;
+import org.springframework.util.FastByteArrayOutputStream;
+
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 验证码实现处理
@@ -34,19 +34,21 @@ public class ValidateCodeServiceImpl implements ValidateCodeService
     @Resource(name = "captchaProducerMath")
     private Producer captchaProducerMath;
 
-    @Autowired
+    @Resource
     private RedisService redisService;
 
-    @Autowired
+    @Resource
     private CaptchaProperties captchaProperties;
 
     /**
      * 生成验证码
      */
     @Override
-    public AjaxResult createCaptcha() throws IOException, CaptchaException
+    public AjaxResult
+    createCaptcha() throws IOException, CaptchaException
     {
         AjaxResult ajax = AjaxResult.success();
+        // 判断当前是否开启了验证码
         boolean captchaEnabled = captchaProperties.getEnabled();
         ajax.put("captchaEnabled", captchaEnabled);
         if (!captchaEnabled)
@@ -55,14 +57,17 @@ public class ValidateCodeServiceImpl implements ValidateCodeService
         }
 
         // 保存验证码信息
+        // 1.生成验证码对应的 uuid
         String uuid = IdUtils.simpleUUID();
+        // 2.进行字符串拼接，得到redis的key
         String verifyKey = CacheConstants.CAPTCHA_CODE_KEY + uuid;
 
         String capStr = null, code = null;
         BufferedImage image = null;
 
+        // 3.拿到验证码的类型
         String captchaType = captchaProperties.getType();
-        // 生成验证码
+        // 4.生成数字验证码
         if ("math".equals(captchaType))
         {
             String capText = captchaProducerMath.createText();
@@ -70,12 +75,14 @@ public class ValidateCodeServiceImpl implements ValidateCodeService
             code = capText.substring(capText.lastIndexOf("@") + 1);
             image = captchaProducerMath.createImage(capStr);
         }
+        // 5.生成字符串验证码
         else if ("char".equals(captchaType))
         {
             capStr = code = captchaProducer.createText();
             image = captchaProducer.createImage(capStr);
         }
 
+        // 将验证码存入redis, 并且设置两分钟的过期时间
         redisService.setCacheObject(verifyKey, code, Constants.CAPTCHA_EXPIRATION, TimeUnit.MINUTES);
         // 转换流信息写出
         FastByteArrayOutputStream os = new FastByteArrayOutputStream();
