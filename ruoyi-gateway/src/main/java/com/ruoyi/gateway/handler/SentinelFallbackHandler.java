@@ -23,14 +23,17 @@ public class SentinelFallbackHandler implements WebExceptionHandler
     @Override
     public Mono<Void> handle(ServerWebExchange exchange, Throwable ex)
     {
+        // 检查响应是否已经提交
         if (exchange.getResponse().isCommitted())
         {
             return Mono.error(ex);
         }
+        // 检查异常是否为BlockException类型
         if (!BlockException.isBlockException(ex))
         {
             return Mono.error(ex);
         }
+        // 处理被阻塞的请求，并返回处理结果
         return handleBlockedRequest(exchange, ex).flatMap(response -> writeResponse(response, exchange));
     }
 

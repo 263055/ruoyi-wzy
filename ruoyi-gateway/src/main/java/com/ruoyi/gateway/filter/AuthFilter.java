@@ -21,9 +21,11 @@ import com.ruoyi.gateway.config.properties.IgnoreWhiteProperties;
 import io.jsonwebtoken.Claims;
 import reactor.core.publisher.Mono;
 
+import javax.annotation.Resource;
+
 /**
  * 网关鉴权
- * 
+ * 在这里进行权限认证
  * @author ruoyi
  */
 @Component
@@ -32,10 +34,10 @@ public class AuthFilter implements GlobalFilter, Ordered
     private static final Logger log = LoggerFactory.getLogger(AuthFilter.class);
 
     // 排除过滤的 uri 地址，nacos自行添加
-    @Autowired
+    @Resource
     private IgnoreWhiteProperties ignoreWhite;
 
-    @Autowired
+    @Resource
     private RedisService redisService;
 
 

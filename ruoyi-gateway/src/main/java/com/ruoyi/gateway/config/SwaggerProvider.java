@@ -1,8 +1,5 @@
 package com.ruoyi.gateway.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.config.GatewayProperties;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.support.NameUtils;
@@ -12,6 +9,10 @@ import org.springframework.web.reactive.config.ResourceHandlerRegistry;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
 import springfox.documentation.swagger.web.SwaggerResource;
 import springfox.documentation.swagger.web.SwaggerResourcesProvider;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 聚合系统接口
@@ -30,10 +31,10 @@ public class SwaggerProvider implements SwaggerResourcesProvider, WebFluxConfigu
      * 网关路由
      */
     @Lazy
-    @Autowired
+    @Resource
     private RouteLocator routeLocator;
 
-    @Autowired
+    @Resource
     private GatewayProperties gatewayProperties;
 
     /**
@@ -72,7 +73,7 @@ public class SwaggerProvider implements SwaggerResourcesProvider, WebFluxConfigu
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry)
     {
-        /** swagger-ui 地址 */
+        /* swagger-ui 地址 */
         registry.addResourceHandler("/swagger-ui/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/springfox-swagger-ui/");
     }

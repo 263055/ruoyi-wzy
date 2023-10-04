@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 // 实现配置文件的动态加载。
 @RefreshScope
-// 读取 ncaos 中的配置
+// 读取 nacos 中的配置
 @ConfigurationProperties(prefix = "security.captcha")
 public class CaptchaProperties
 {
